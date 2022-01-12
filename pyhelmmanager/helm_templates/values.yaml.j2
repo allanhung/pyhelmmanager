@@ -1,0 +1,83 @@
+# Overrides the chart's name
+nameOverride: null
+
+# Overrides the chart's computed fullname
+fullnameOverride: null
+{% if kind == 'deploy' %}
+# Number of replicas for the pod
+replicas: 1
+{%- endif %}
+
+# The number of old replicaSets to retain to allow rollback
+revisionHistoryLimit: 2
+
+# Annotations for the pod
+podAnnotations: {}
+
+# The name of the ServiceAccount to use for the pod
+serviceAccountName: ""
+#serviceAccountName: '{{ "{{" }} include "{{ projectName }}.fullname" . {{ "}}" }}'
+
+# Image pull secrets for docker images
+imagePullSecrets: []
+
+# Pod anti-affinity
+affinity: {}
+
+# Tolerations for the pod
+tolerations: []
+
+# Node selector for the pod
+nodeSelector: {}
+
+# SecurityContext for the pod
+podSecurityContext: {}
+
+image:
+  # Docker image registry for the image
+  registry: null
+  # Docker image repository for the image
+  repository: {{ values.image.repository }}
+  # Docker image tag for the image
+  tag: null
+  # Docker image pull policy
+  pullPolicy: Always
+
+# Configures the liveness probe for the container
+livenessProbe: {}
+
+# Configures the readiness probe for the container
+readinessProbe: {}
+
+# Define command for the container
+command: []
+
+# Define arguments for the container
+args: []
+
+# The SecurityContext for the container
+containerSecurityContext: {}
+
+# Environment variables to add to the pod (key: value)
+env: {}
+
+# Environment variables from secrets or configmaps to add to the pod
+envFrom: []
+
+# Volume mounts to add to the the pod
+volumeMounts: []
+#volumeMounts:
+#  - name: {{ projectName }}-config
+#    mountPath: /config
+
+# Resource requests and limits for the pod
+resources: {}
+
+# Volumes to add to the pod
+volumes: []
+#volumes:
+#- name: {{ projectName }}-config
+#  configMap:
+#    name: {{ projectName }}
+
+config: ""

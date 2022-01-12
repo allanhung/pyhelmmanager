@@ -1,0 +1,11 @@
+{{ "{{" }}- if .Values.config -{{ "}}" }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    {{ "{{" }}- include "{{ projectName }}.labels" . | nindent 4 {{ "}}" }}
+  name: {{ "{{" }} include "{{ projectName }}.fullname" . {{ "}}" }}
+  namespace: {{ "{{" }} .Release.Namespace {{ "}}" }}
+data:
+  {{ "{{" }} tpl (toYaml .Values.config) . | nindent 2 {{ "}}" }}
+{{ "{{" }}- end -{{ "}}" }}

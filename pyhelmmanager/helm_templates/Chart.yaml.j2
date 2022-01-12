@@ -1,0 +1,12 @@
+apiVersion: v2
+name: {{ projectName }}
+description: A Helm chart for {{ projectName }}
+type: application
+version: {{ chartVersion }}
+appVersion: {{ appVersion }}
+{%- if sources is defined %}
+sources:
+{%- for item in sources %}
+- {{ item }}
+{%- endfor %}
+{%- endif %}
