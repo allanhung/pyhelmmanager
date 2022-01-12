@@ -43,6 +43,24 @@ sources:
 values:
   image:
     repository: hjacobs/kube-janitor
+  volumeMounts:
+  - name: kube-janitor-config
+    mountPath: /config
+  
+  volumes:
+  - name: kube-janitor-config
+    configMap:
+      name: kube-janitor
+  
+  config:
+    rules.yaml:
+      rules:
+      # delete all PVCs which are not mounted and not referenced by StatefulSets
+      - id: remove-unused-pvcs
+        resources:
+        - persistentvolumeclaims
+        jmespath: "_context.pvc_is_not_mounted && _context.pvc_is_not_referenced"
+        ttl: 7d
 EOF
 ```
 * generate helm chart template
@@ -57,24 +75,7 @@ curl -o kube-janitor/templates/rbac.yaml https://codeberg.org/hjacobs/kube-janit
 ```bash
 pyhelmmanager chart patchrbacfile -p kube-janitor -f kube-janitor/templates/rbac.yaml
 ```
-* setup kube-janitor/values.yaml
-```yaml
-volumeMounts:
-- name: kube-janitor-config
-  mountPath: /config
-
-volumes:
-- name: kube-janitor-config
-  configMap:
-    name: kube-janitor
-
-config:
-  rules.yaml: |
-    rules:
-    # delete all PVCs which are not mounted and not referenced by StatefulSets
-    - id: remove-unused-pvcs
-      resources:
-      - persistentvolumeclaims
-      jmespath: "_context.pvc_is_not_mounted && _context.pvc_is_not_referenced"
-      ttl: 7d
+* check result
+```bash
+helm template --namespace=test kube-janitor -f kube-janitor/values.yaml kube-janitor
 ```

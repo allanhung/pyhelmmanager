@@ -1,0 +1,35 @@
+chartVersion: 0.1.0
+appVersion: 20.10.0
+sources:
+- https://codeberg.org/hjacobs/kube-janitor
+
+values:
+  args:
+  - --dry-run
+  - --debug
+  - --interval=60
+  - --rules-file=/config/rules.yaml
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+  image:
+    repository: hjacobs/kube-janitor
+  revisionHistoryLimit: 2
+  serviceAccountName: "kube-janitor"
+  volumeMounts:
+  - name: kube-janitor-config
+    mountPath: /config
+  volumes:
+  - name: kube-janitor-config
+    configMap:
+      name: kube-janitor
+  config:
+    rules.yaml: 
+      rules:
+      # delete all PVCs which are not mounted and not referenced by StatefulSets
+      - id: remove-unused-pvcs
+        resources:
+        - persistentvolumeclaims
+        jmespath: "_context.pvc_is_not_mounted && _context.pvc_is_not_referenced"
+        ttl: 7d

@@ -1,0 +1,53 @@
+chartVersion: 0.1.0
+appVersion: 1.5.0
+sources:
+- https://github.com/subspacecommunity/subspace
+
+values:
+  service:
+    enabled: true
+    port: 80
+    targetPort: 8080
+    type: ClusterIP
+    udp:
+      enabled: true
+      port: 51820
+      type: LoadBalancer
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    host: subspace.mydomain.com
+    tls:
+      enabled: true
+  containerSecurityContext:
+    privileged: true
+  env:
+    SUBSPACE_HTTP_HOST: subspace.develop.in.quid.com
+    SUBSPACE_ENDPOINT_HOST: 47.252.30.166
+    SUBSPACE_LETSENCRYPT: "false"
+    SUBSPACE_HTTP_INSECURE: "true"
+    SUBSPACE_HTTP_ADDR: ":8080"
+    SUBSPACE_NAMESERVERS: "1.1.1.1,8.8.8.8"
+    SUBSPACE_LISTENPORT: "51820"
+    SUBSPACE_IPV4_POOL: 10.99.97.0/24
+    SUBSPACE_IPV6_POOL: fd00::10:97:0/64
+    SUBSPACE_IPV4_GW: 10.99.97.1
+    SUBSPACE_IPV6_GW: fd00::10:97:1
+    SUBSPACE_IPV6_NAT_ENABLED: "0"
+    SUBSPACE_DISABLE_DNS: "1"
+    SUBSPACE_ALLOWED_IPS: 10.99.97.0/24,10.0.0.0/8
+  image:
+    repository: allanhung/subspace
+  volumeMounts:
+  - mountPath: /host/usr/src
+    name: usr-src
+  - mountPath: /lib/modules
+    name: lib-modules
+  volumes:
+  - hostPath:
+      path: /usr/src
+    name: usr-src
+  - hostPath:
+      path: /lib/modules
+    name: lib-modules

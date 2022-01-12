@@ -7,5 +7,5 @@ metadata:
   name: {{ "{{" }} include "{{ projectName }}.fullname" . {{ "}}" }}
   namespace: {{ "{{" }} .Release.Namespace {{ "}}" }}
 data:
-  {{ "{{" }} tpl (toYaml .Values.config) . | nindent 2 {{ "}}" }}
+  {{ "{{-" }} tpl (toYaml .Values.config) . | nindent 2 {{ "}}" }}
 {{ "{{" }}- end -{{ "}}" }}

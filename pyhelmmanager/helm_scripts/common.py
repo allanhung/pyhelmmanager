@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from jinja2 import Template
+import jinja2
 import collections
 import shlex, subprocess
 import yaml
@@ -19,7 +19,10 @@ def getTemplateDir():
     return os.path.join(os.path.dirname(pyhelmmanager.__file__), "helm_templates")
 
 def render_template(template_str, template_dict, output_file):
-    output_str = Template(template_str).render(template_dict) if template_dict else template_str
+    env = jinja2.Environment()
+    env.filters["toYaml"]=toYaml
+    env.filters["toYamlString"]=toYamlString
+    output_str = env.from_string(template_str).render(template_dict) if template_dict else template_str
     # to save the results
     if output_file:
         with open(output_file, "w") as f:
@@ -164,3 +167,13 @@ def generate_pipeline_setting(appName, env, config):
     if 'gitRepo' not in context.keys():
         context['gitRepo'] = appName
     return context
+
+def toYaml(d, indent=10, result=""):
+    result = yaml.dump(d, explicit_start=False, default_flow_style=False)
+    return result[:-1]
+
+def toYamlString(d, indent=10, result=""):
+    result = yaml.dump(d, explicit_start=False, default_flow_style=False)
+    result = "|\n"+result[:-1]
+    result = result.replace("\n", "\n  ")
+    return result
