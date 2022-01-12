@@ -20,6 +20,6 @@ spec:
     nodePort: {{ "{{" }} . {{ "}}" }}
     {{ "{{" }}- end {{ "}}" }}
   selector:
-    app: {{ "{{" }}- include "{{ projectName }}.matchLabels" . | nindent 6 {{ "}}" }}
+    {{ "{{" }}- include "{{ projectName }}.matchLabels" . | nindent 4 {{ "}}" }}
   type: {{ "{{" }} .Values.service.udp.type {{ "}}" }}
 {{ "{{" }}- end {{ "}}" }}

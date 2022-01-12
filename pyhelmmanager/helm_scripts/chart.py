@@ -48,6 +48,8 @@ def create(args):
         else:
             chartFile = os.path.join(os.getcwd(), args['--project'], "templates", chartTemplate[:-3])
         common.render_template(common.read_template(chartTemplate), config, chartFile)
+    print("Test:\n  helm template --namespace={project_name} {project_name} -f {project_name}/values.yaml {project_name}".format(project_name=args['--project']))
+    print("Install:\n  helm upgrade --install {project_name} --namespace {project_name} --create-namespace -f {project_name}/values.yaml {project_name}".format(project_name=args['--project']))
 
 def patchrbacfile(args):
     print('patch rbac file %s.' % args['--file'])

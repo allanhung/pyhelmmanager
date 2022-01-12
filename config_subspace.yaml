@@ -1,5 +1,5 @@
 chartVersion: 0.1.0
-appVersion: 1.5.0
+appVersion: v1.5.0
 sources:
 - https://github.com/subspacecommunity/subspace
 
@@ -23,7 +23,7 @@ values:
   containerSecurityContext:
     privileged: true
   env:
-    SUBSPACE_HTTP_HOST: subspace.develop.in.quid.com
+    SUBSPACE_HTTP_HOST: subspace.mydomain.com
     SUBSPACE_ENDPOINT_HOST: 47.252.30.166
     SUBSPACE_LETSENCRYPT: "false"
     SUBSPACE_HTTP_INSECURE: "true"

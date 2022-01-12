@@ -79,3 +79,11 @@ pyhelmmanager chart patchrbacfile -p kube-janitor -f kube-janitor/templates/rbac
 ```bash
 helm template --namespace=test kube-janitor -f kube-janitor/values.yaml kube-janitor
 ```
+* Install
+```bash
+helm upgrade --install kube-janitor \
+    --namespace test \
+    --create-namespace \
+    -f kube-janitor/values.yaml \
+    kube-janitor/
+```
