@@ -128,3 +128,7 @@ ingress: {% if values.ingress is defined %}
 {{ values.ingress|toYaml|indent(2, True) }}{% else %}
   enabled: false
 {%- endif %}
+
+ingressList: {% if values.ingress is defined %}
+{{ values.ingressList|toYaml|indent(2, True) }}{% else %}[]
+{%- endif %}

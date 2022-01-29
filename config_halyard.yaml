@@ -1,0 +1,73 @@
+chartVersion: 0.1.0
+appVersion: v1.44.1
+sources:
+- https://github.com/spinnaker/halyard
+
+values:
+  kubeVersionOverride: 1.22.3
+  command:
+  - sh
+  - -c
+  - cp -r /home/spinnaker/hal /home/spinnaker/.hal/ && /opt/halyard/bin/halyard
+  image:
+    registry: us-docker.pkg.dev
+    repository: spinnaker-community/docker/halyard
+    tag: stable
+  volumeMounts:
+  - mountPath: /home/spinnaker/hal
+    name: config
+  - mountPath: /home/spinnaker/hal/default/profiles
+    name: profiles
+  - mountPath: /home/spinnaker/hal/default/service-settings
+    name: service-settings
+  volumes:
+  - name: config
+    configMap:
+      name: hal
+      defaultMode: 420
+      items:
+      - key: config
+        path: config
+      - key: ali.yml
+        path: ali.yml
+  - name: profiles
+    configMap:
+      name: hal
+      defaultMode: 420
+      items:
+      - key: echo-local.yml
+        path: echo-local.yml
+      - key: gate-local.yml
+        path: gate-local.yml
+  - name: service-settings
+    configMap:
+      name: hal
+      defaultMode: 420
+      items:
+      - key: deck.yml
+        path: deck.yml
+      - key: gate.yml
+        path: gate.yml
+      - key: redis.yml
+        path: redis.yml
+  ingress:
+     enable: false
+  ingressList:
+  - host: spinnaker.mydomain.com
+    ingressClassName: nginx-internal
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    service:
+      name: spin-deck
+      port: 9000
+    tls:
+      enabled: true
+  - host: spinnaker-api.mydomain.com
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    ingressClassName: nginx-internal
+    service:
+      name: spin-gate
+      port: 8084
+    tls:
+      enabled: true

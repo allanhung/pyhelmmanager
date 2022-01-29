@@ -34,7 +34,7 @@ def create(args):
         sys.exit('Does not support kind: %s' % args['--kind'])
     config = common.loadconfig(args['--project'])  
     config['kind']=args['--kind']
-    chartTemplates = ["_helpers.tpl.j2", "Chart.yaml.j2", "configmap.yaml.j2", "values.yaml.j2", "service.yaml.j2", "service-udp.yaml.j2", "ingress.yaml.j2"]
+    chartTemplates = ["_helpers.tpl.j2", "Chart.yaml.j2", "configmap.yaml.j2", "values.yaml.j2", "service.yaml.j2", "service-udp.yaml.j2", "ingress.yaml.j2", "ingress_list.yaml.j2"]
     if args['--kind'] in ["deploy", "deployment"]:
         chartTemplates.append("deployment.yaml.j2")
     elif args['--kind'] in ["ds", "daemonset"]:

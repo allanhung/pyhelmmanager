@@ -1,0 +1,8 @@
+chartVersion: 0.1.0
+appVersion: 0.104.0
+sources:
+- https://github.com/Cisco-Talos/clamav
+
+values:
+  image:
+    repository: clamav/clamav
