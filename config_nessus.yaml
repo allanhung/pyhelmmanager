@@ -1,0 +1,28 @@
+chartVersion: 0.1.0
+appVersion: 10.0.2
+sources:
+- https://www.tenable.com/
+- https://hub.docker.com/r/tenableofficial/nessus
+
+values:
+  kubeVersionOverride: 1.22.3
+  service:
+    enabled: true
+    port: 80
+    targetPort: 8443
+    type: ClusterIP
+    udp:
+      enabled: false
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    ingressClassName: nginx-internal
+    host: nessus.mydomain.com
+    tls:
+      enabled: true
+  image:
+    repository: tenableofficial/nessus
+  env:
+    USERNAME: admin
+    PASSWORD: admin

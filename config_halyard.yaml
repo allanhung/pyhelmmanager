@@ -20,6 +20,8 @@ values:
     name: profiles
   - mountPath: /home/spinnaker/hal/default/service-settings
     name: service-settings
+  - mountPath: /home/spinnaker/hal/saml
+    name: saml
   volumes:
   - name: config
     configMap:
@@ -50,6 +52,15 @@ values:
         path: gate.yml
       - key: redis.yml
         path: redis.yml
+  - name: saml
+    configMap:
+      name: hal
+      defaultMode: 420
+      items:
+      - key: metadata.yaml
+        path: metadata.yml
+      - key: spinnaker.jks
+        path: spinnaker.jks
   ingress:
      enable: false
   ingressList:
