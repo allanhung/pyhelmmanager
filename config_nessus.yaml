@@ -8,8 +8,8 @@ values:
   kubeVersionOverride: 1.22.3
   service:
     enabled: true
-    port: 80
-    targetPort: 8443
+    port: 8834
+    targetPort: 8834
     type: ClusterIP
     udp:
       enabled: false
@@ -17,12 +17,26 @@ values:
     enabled: true
     annotations:
       kubernetes.io/tls-acme: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     ingressClassName: nginx-internal
     host: nessus.mydomain.com
     tls:
       enabled: true
   image:
     repository: tenableofficial/nessus
-  env:
-    USERNAME: admin
-    PASSWORD: admin
+  envFrom:
+  - name: USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: '{{ include "nessus.fullname" . }}'
+        key: USERNAME
+  - name: PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: '{{ include "nessus.fullname" . }}'
+        key: PASSWORD
+  - name: ACTIVATION_CODE
+    valueFrom:
+      secretKeyRef:
+        name: '{{ include "nessus.fullname" . }}'
+        key: ACTIVATION_CODE
