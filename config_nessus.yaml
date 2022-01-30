@@ -25,18 +25,10 @@ values:
   image:
     repository: tenableofficial/nessus
   envFrom:
-  - name: USERNAME
-    valueFrom:
-      secretKeyRef:
-        name: '{{ include "nessus.fullname" . }}'
-        key: USERNAME
-  - name: PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: '{{ include "nessus.fullname" . }}'
-        key: PASSWORD
-  - name: ACTIVATION_CODE
-    valueFrom:
-      secretKeyRef:
-        name: '{{ include "nessus.fullname" . }}'
-        key: ACTIVATION_CODE
+  - secretRef:
+    name: '{{ include "nessus.fullname" . }}'
+  secrets:
+    data:
+      USERNAME: admin
+      PASSWORD: admin
+      ACTIVATION_CODE: 1234-5678-90AB-CDEF-1234 

@@ -117,6 +117,9 @@ volumes: {% if values.volumes is defined %}
 
 config: {% if values.config is defined %}{{ values.config|toYamlString }}{% else %}""{% endif %}
 
+secrets: {% if values.secrets is defined %}{{ values.secrets }}{% else %}{}
+{% endif %}
+
 service: {% if values.service is defined %}
 {{ values.service|toYaml|indent(2, True) }}{% else %}
   enabled: false
