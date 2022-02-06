@@ -1,4 +1,4 @@
-from centos
+from rockylinux
 
 RUN dnf install -y git python3 
 ADD . /apps/
