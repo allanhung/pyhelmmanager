@@ -1,0 +1,63 @@
+chartVersion: 0.1.0
+appVersion: 0.24.1
+sources:
+- https://github.com/grafana/agent
+
+values:
+  args:
+  - -config.file=/etc/agent/agent.yaml
+  - -enable-features=integrations-next
+  - -server.http.address=0.0.0.0:12345
+  command:
+  - /bin/agent
+  env:
+    HOSTNAME:
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+  image:
+    repository: grafana/agent
+  revisionHistoryLimit: 2
+  serviceAccountName: '{{ include "grafana-agent-eventhandler.fullname" . }}'
+  volumeMounts:
+  - name: grafana-agent
+    mountPath: /etc/agent
+  - name: eventhandler-cache
+    mountPath: /etc/eventhandler
+  volumes:
+  - configMap:
+      name: '{{ include "grafana-agent-eventhandler.fullname" . }}'
+    name: grafana-agent
+  volumeClaimTemplates:
+  - metadata:
+      name: eventhandler-cache
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "-"
+      resources:
+        requests:
+          storage: 1Gi
+  service:
+    tcp:
+      enabled: true
+      services:
+      - port: 12345
+        portName: http-metrics
+    udp:
+      enabled: false
+  config:
+    agent.yaml: 
+      server:
+        log_level: error
+  
+      integrations:
+        eventhandler:
+          cache_path: "/etc/eventhandler/eventhandler.cache"
+          logs_instance: '{{ include "grafana-agent-eventhandler.fullname" . }}'
+      logs:
+        configs:
+        - name: '{{ include "grafana-agent-eventhandler.fullname" . }}'
+          clients:
+          - url: http://loki-loki-distributed-distributor:3100/loki/api/v1/push
+          positions:
+            filename: /tmp/positions0.yaml

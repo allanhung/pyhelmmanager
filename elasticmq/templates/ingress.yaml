@@ -1,0 +1,46 @@
+{{- $apiIsStable := eq (include "elasticmq.ingress.isStable" .) "true" -}}
+{{- $pathType := .Values.ingress.pathType | default "Prefix" }}
+{{- $serviceName := .Values.ingress.service.name | default (include "elasticmq.fullname" .) }}
+{{- $servicePort := .Values.ingress.service.port | default "80" }}
+{{- $ingressSupportsPathType := eq (include "elasticmq.ingress.supportsPathType" .) "true" }}
+{{- if and .Values.ingress.enabled .Values.service.tcp.enabled }}
+apiVersion: {{ include "elasticmq.ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "elasticmq.labels" . | nindent 4 }}
+  name: {{ include "elasticmq.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if $apiIsStable }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host  }}
+      secretName: tls-{{ include "elasticmq.fullname" . }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.path | default "/" }}
+            {{- if $ingressSupportsPathType }}
+            pathType: {{ $pathType }}
+            {{- end }}
+            backend:
+              {{- if $apiIsStable }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  number: {{ $servicePort }}
+              {{- else }}              
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+              {{- end }}
+{{- end }}

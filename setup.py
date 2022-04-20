@@ -10,7 +10,7 @@ setup(
     name='pyhelmmanager',
     packages=setuptools.find_packages(),
     package_data={'pyhelmmanager': ['helm_templates/*.j2']},
-    install_requires=['docopt', 'jinja2', 'jq', 'tqdm', 'pyyaml', 'numpy'],
+    install_requires=['requests', 'docopt', 'jinja2', 'jq', 'tqdm', 'pyyaml', 'numpy'],
     version=VERSION,
     description='create helm charts with template',
     author='Allan',

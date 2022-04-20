@@ -12,13 +12,15 @@ metadata:
   namespace: {{ "{{" }} .Release.Namespace {{ "}}" }}
 spec:
   ports:
-  - name: {{ "{{" }} .Values.service.udp.portName | default "http" {{ "}}" }}
-    port: {{ "{{" }} .Values.service.udp.port | default "80" {{ "}}" }}
-    targetPort: {{ "{{" }} .Values.service.udp.targetPort | default .Values.service.udp.port | default "80" {{ "}}" }}
+  {{ "{{" }}- range $service := .Values.service.udp.services {{ "}}" }}
+  - name: {{ "{{" }} $service.portName | default "http" {{ "}}" }}
+    port: {{ "{{" }} $service.port | default "80" {{ "}}" }}
+    targetPort: {{ "{{" }} $service.targetPort | default $service.port | default "80" {{ "}}" }}
     protocol: UDP
-    {{ "{{" }}- with .Values.service.udp.nodePort {{ "}}" }}
+    {{ "{{" }}- with $service.nodePort {{ "}}" }}
     nodePort: {{ "{{" }} . {{ "}}" }}
     {{ "{{" }}- end {{ "}}" }}
+  {{ "{{" }}- end {{ "}}" }}
   selector:
     {{ "{{" }}- include "{{ projectName }}.matchLabels" . | nindent 4 {{ "}}" }}
   type: {{ "{{" }} .Values.service.udp.type {{ "}}" }}

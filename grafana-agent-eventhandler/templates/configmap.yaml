@@ -1,0 +1,11 @@
+{{- if .Values.config -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    {{- include "grafana-agent-eventhandler.labels" . | nindent 4 }}
+  name: {{ include "grafana-agent-eventhandler.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- tpl (toYaml .Values.config) . | nindent 2 }}
+{{- end -}}

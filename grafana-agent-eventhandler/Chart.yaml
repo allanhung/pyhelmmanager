@@ -1,0 +1,8 @@
+apiVersion: v2
+name: grafana-agent-eventhandler
+description: A Helm chart for grafana-agent-eventhandler
+type: application
+version: 0.1.0
+appVersion: 0.24.1
+sources:
+- https://github.com/grafana/agent

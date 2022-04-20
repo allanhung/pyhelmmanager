@@ -1,9 +1,9 @@
+{{ "{{" }}- if .Values.ingressList {{ "}}" }}
 {{ "{{" }}- $fullname := include "{{ projectName }}.fullname" . {{ "}}"}}
 {{ "{{" }}- $apiVersion := include "{{ projectName }}.ingress.apiVersion" . {{ "}}"}}
 {{ "{{" }}- $labels := include "{{ projectName }}.labels" . {{ "}}"}}
 {{ "{{" }}- $apiIsStable := eq (include "{{ projectName }}.ingress.isStable" .) "true" -{{ "}}" }}
 {{ "{{" }}- $ingressSupportsPathType := eq (include "{{ projectName }}.ingress.supportsPathType" .) "true" {{ "}}" }}
-{{ "{{" }}- if .Values.ingressList {{ "}}" }}
 {{ "{{" }}- range $index, $ingress := .Values.ingressList {{ "}}" }}
 {{ "{{" }}- $pathType := $ingress.pathType | default "Prefix" {{ "}}" }}
 {{ "{{" }}- $serviceName := $ingress.service.name | default $fullname {{ "}}" }}

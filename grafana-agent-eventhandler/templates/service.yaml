@@ -1,0 +1,27 @@
+{{- if .Values.service.tcp.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  {{- with .Values.service.tcp.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "grafana-agent-eventhandler.labels" . | nindent 4 }}
+  name: {{ include "grafana-agent-eventhandler.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  {{- range $service := .Values.service.tcp.services }}  
+  - name: {{ $service.portName | default "http" }}
+    port: {{ $service.port | default "80" }}
+    targetPort: {{ $service.targetPort | default $service.port | default "80" }}
+    protocol: TCP
+    {{- with $service.nodePort }}
+    nodePort: {{ . }}
+    {{- end }}
+  {{- end }}  
+  selector:
+    {{- include "grafana-agent-eventhandler.matchLabels" . | nindent 4 }}
+  type: {{ .Values.service.tcp.type }}
+{{- end }}

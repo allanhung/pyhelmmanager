@@ -1,0 +1,46 @@
+{{- if and .Values.ingress.enabled .Values.service.tcp.enabled }}
+{{- $apiIsStable := eq (include "grafana-agent-eventhandler.ingress.isStable" .) "true" -}}
+{{- $pathType := .Values.ingress.pathType | default "Prefix" }}
+{{- $serviceName := .Values.ingress.service.name | default (include "grafana-agent-eventhandler.fullname" .) }}
+{{- $servicePort := .Values.ingress.service.port | default "80" }}
+{{- $ingressSupportsPathType := eq (include "grafana-agent-eventhandler.ingress.supportsPathType" .) "true" }}
+apiVersion: {{ include "grafana-agent-eventhandler.ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    {{- include "grafana-agent-eventhandler.labels" . | nindent 4 }}
+  name: {{ include "grafana-agent-eventhandler.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- if $apiIsStable }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host  }}
+      secretName: tls-{{ include "grafana-agent-eventhandler.fullname" . }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.path | default "/" }}
+            {{- if $ingressSupportsPathType }}
+            pathType: {{ $pathType }}
+            {{- end }}
+            backend:
+              {{- if $apiIsStable }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  number: {{ $servicePort }}
+              {{- else }}              
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+              {{- end }}
+{{- end }}

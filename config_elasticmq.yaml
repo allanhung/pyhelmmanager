@@ -1,0 +1,42 @@
+chartVersion: 0.1.0
+appVersion: 1.3.6
+sources:
+- https://github.com/softwaremill/elasticmq
+
+values:
+  kubeVersionOverride: 1.22.3
+  service:
+    tcp:
+      enabled: true
+      services:
+      -  portName: svc
+         port: 9324
+         targetPort: 9324
+         type: ClusterIP
+      -  portName: ui
+         port: 9325
+         targetPort: 9325
+         type: ClusterIP
+    udp:
+      enabled: false
+  ingress:
+    enabled: true
+    service:
+      port: 9325
+    annotations:
+      kubernetes.io/tls-acme: "true"
+    ingressClassName: nginx-internal
+    host: elasticmq.mydomain.com
+    tls:
+      enabled: true
+  image:
+    repository: softwaremill/elasticmq
+  volumeMounts:
+  - name: '{{ include "elasticmq.fullname" . }}-config'
+    mountPath: /opt
+  volumes:
+  - name: '{{ include "elasticmq.fullname" . }}-config'
+    configMap:
+      name: '{{ include "elasticmq.fullname" . }}-config'
+  config:
+    elasticmq.conf: ""

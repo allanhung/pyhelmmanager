@@ -1,9 +1,9 @@
+{{ "{{" }}- if and .Values.ingress.enabled .Values.service.tcp.enabled {{ "}}" }}
 {{ "{{" }}- $apiIsStable := eq (include "{{ projectName }}.ingress.isStable" .) "true" -{{ "}}" }}
 {{ "{{" }}- $pathType := .Values.ingress.pathType | default "Prefix" {{ "}}" }}
-{{ "{{" }}- $serviceName := include "{{ projectName }}.fullname" . {{ "}}" }}
-{{ "{{" }}- $servicePort := .Values.service.port | default "80" {{ "}}" }}
+{{ "{{" }}- $serviceName := .Values.ingress.service.name | default (include "{{ projectName }}.fullname" .) {{ "}}" }}
+{{ "{{" }}- $servicePort := .Values.ingress.service.port | default "80" {{ "}}" }}
 {{ "{{" }}- $ingressSupportsPathType := eq (include "{{ projectName }}.ingress.supportsPathType" .) "true" {{ "}}" }}
-{{ "{{" }}- if and .Values.ingress.enabled .Values.service.enabled {{ "}}" }}
 apiVersion: {{ "{{" }} include "{{ projectName }}.ingress.apiVersion" . {{ "}}" }}
 kind: Ingress
 metadata:

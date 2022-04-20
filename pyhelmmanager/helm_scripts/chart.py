@@ -30,15 +30,19 @@ import jinja2
 
 def create(args):
     print('create chart template in directory %s.' % args['--project'])
-    if not args['--kind'] in ["deploy", "deployment", "ds", "daemonset"]:
+    if not args['--kind'] in ["deploy", "deployment", "ds", "daemonset", "statefulset"]:
         sys.exit('Does not support kind: %s' % args['--kind'])
     config = common.loadconfig(args['--project'])  
-    config['kind']=args['--kind']
     chartTemplates = ["_helpers.tpl.j2", "Chart.yaml.j2", "configmap.yaml.j2", "secrets.yaml.j2", "values.yaml.j2", "service.yaml.j2", "service-udp.yaml.j2", "ingress.yaml.j2", "ingress_list.yaml.j2"]
     if args['--kind'] in ["deploy", "deployment"]:
+        config['kind']='deploy'
         chartTemplates.append("deployment.yaml.j2")
     elif args['--kind'] in ["ds", "daemonset"]:
+        config['kind']='ds'
         chartTemplates.append("daemonset.yaml.j2")
+    elif args['--kind'] in ["statefulset"]:
+        config['kind']='statefulset'
+        chartTemplates.append("statefulset.yaml.j2")
     pathlib.Path(os.path.join(os.getcwd(), args['--project'], "templates")).mkdir(parents=True, exist_ok=True)
     for chartTemplate in tqdm(chartTemplates):
         if chartTemplate.endswith("values.yaml.j2"):
@@ -49,7 +53,7 @@ def create(args):
             chartFile = os.path.join(os.getcwd(), args['--project'], "templates", chartTemplate[:-3])
         print(chartTemplate)
         common.render_template(common.read_template(chartTemplate), config, chartFile)
-    print("Test:\n  helm template --namespace={project_name} {project_name} -f {project_name}/values.yaml {project_name}".format(project_name=args['--project']))
+    print("Test:\n  helm template --namespace={project_name} --release-name {project_name} -f {project_name}/values.yaml {project_name}".format(project_name=args['--project']))
     print("Install:\n  helm upgrade --install {project_name} --namespace {project_name} --create-namespace -f {project_name}/values.yaml {project_name}".format(project_name=args['--project']))
 
 def patchrbacfile(args):

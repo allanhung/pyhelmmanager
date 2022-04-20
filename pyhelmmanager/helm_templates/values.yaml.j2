@@ -5,7 +5,7 @@ nameOverride: {% if values.nameOverride is defined %}{{ values.nameOverride }}{%
 fullnameOverride: {% if values.fullnameOverride is defined %}{{ values.fullnameOverride }}{% else %}null{% endif %}
 
 kubeVersionOverride: {% if values.kubeVersionOverride is defined %}{{ values.kubeVersionOverride }}{% else %}null{% endif %}
-{% if kind == 'deploy' %}
+{% if (kind == 'deploy') or (kind == 'statefulset')  %}
 # Number of replicas for the pod
 replicas: {% if values.replicas is defined %}{{ values.replicas }}{% else %}1{% endif %}
 {%- endif %}
@@ -115,6 +115,19 @@ volumes: {% if values.volumes is defined %}
 #    name: {{ projectName }}
 {%- endif %}
 
+# volumeClaimTemplates
+volumeClaimTemplates: {% if values.volumeClaimTemplates is defined %}
+{{ values.volumeClaimTemplates|toYaml }}{% else %}[]
+#volumeClaimTemplates:
+#- metadata:
+#    name: {{ projectName }}-data
+#  spec:
+#    accessModes: [ "ReadWriteOnce" ]
+#    resources:
+#      requests:
+#        storage: 1Gi
+{%- endif %}
+
 config: {% if values.config is defined %}{{ values.config|toYamlString }}{% else %}""{% endif %}
 
 secrets: {% if values.secrets is defined %}{{ values.secrets }}{% else %}{}
@@ -122,7 +135,8 @@ secrets: {% if values.secrets is defined %}{{ values.secrets }}{% else %}{}
 
 service: {% if values.service is defined %}
 {{ values.service|toYaml|indent(2, True) }}{% else %}
-  enabled: false
+  tcp:
+    enabled: false
   udp:
     enabled: false
 {%- endif %}
